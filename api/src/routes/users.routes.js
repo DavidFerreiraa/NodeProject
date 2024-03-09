@@ -1,16 +1,16 @@
 const { Router } = require("express");
+const UsersController = require("../controllers/UsersController");
 
 const usersRoutes = Router();
+const usersControllers = new UsersController();
 
-usersRoutes.get("/", (request, response) => {
-    const { page, limit } = request.query;
-    response.send(`Página: ${page} - Limite de usuários: ${limit}`);
-});
+function middleware(request, response, next) {
+    console.log("Passed trough the middleware");
+    next();
+}
 
-usersRoutes.post("/", (request, response) => {
-    const { name, email, password } = request.body;
+usersRoutes.get("/", usersControllers.index);
 
-    response.json({ name, email, password });
-})
+usersRoutes.post("/", usersControllers.create)
 
 module.exports = usersRoutes;
