@@ -9,8 +9,6 @@ function middleware(request, response, next) {
     next();
 }
 
-usersRoutes.get("/", usersControllers.index);
-
 usersRoutes.post("/", usersControllers.create)
 
 module.exports = usersRoutes;
