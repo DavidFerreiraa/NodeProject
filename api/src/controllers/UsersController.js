@@ -1,4 +1,5 @@
 const AppError = require("../utils/AppError");
+const sqliteConnection = require("../database/sqlite");
 
 class UsersController {
     index(request, response) {
@@ -6,14 +7,19 @@ class UsersController {
         response.status(200).send(`Página: ${page} - Limite de usuários: ${limit}`);
     }
 
-    create(request, response) {
+    async create(request, response) {
         const { name, email, password } = request.body;
 
-        if(!name) {
-            throw new AppError("You forgot to insert your name.")
+        const database = await sqliteConnection();
+        const userExists = await database.get("SELECT * FROM users WHERE email = (?)", [email])
+
+        if (userExists) {
+            throw new AppError("This e-mail is already in use.")
         }
 
-        response.status(201).json({ name, email, password });
+        await database.run("INSERT INTO users ( name, email, password) VALUES (?, ?, ?)", [name, email, password]) //Create a user into db
+
+        return response.status(201).json();
     }
 }
 
