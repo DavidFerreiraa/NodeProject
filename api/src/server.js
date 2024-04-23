@@ -12,9 +12,11 @@ const app = express();
 
 migrationsRun();
 
+app.use(cors({
+    origin: "http://localhost:5173"
+}));
 app.use(express.json());
 app.use(routes);
-app.use(cors());
 
 app.use("/files", express.static(uploadConfig.UPLOADS_FOLDER));
 
@@ -32,7 +34,6 @@ app.use(( error, request, response, next ) => {
             message: "Internal server error"
         });
     }
-
 })
 
 const PORT = 3333;
