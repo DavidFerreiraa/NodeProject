@@ -1,6 +1,7 @@
 const AppError = require("../utils/AppError");
 const sqliteConnection = require("../database/sqlite");
 const { hash, compare } = require("bcryptjs");
+const validator = require("email-validator");
 
 class UsersController {
     async create(request, response) {
@@ -13,7 +14,7 @@ class UsersController {
             throw new AppError("This e-mail is already in use.");
         }
 
-        if (/^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i.test(email)) {
+        if (!validator.validate(email)) {
             throw new AppError("Insert a valid e-mail.")
         }
 
@@ -42,6 +43,10 @@ class UsersController {
         if (!email) {
             throw new AppError("E-mail is missing", 401);
         }
+
+        if (!validator.validate(email)) {
+            throw new AppError("Insert a valid e-mail.")
+        }
         
         const userWithUpdatedEmail = await database.get("SELECT * FROM users WHERE email = (?)", [email.toLowerCase()]);
 
@@ -57,6 +62,11 @@ class UsersController {
         }
 
         if ( password && old_password ) {
+
+            if (password.length < 6) {
+                throw new AppError("Your password must have more than 6 characters.")
+            }
+
             const checkOldPassword = await compare(old_password, user.password);
 
             if (!checkOldPassword) {
