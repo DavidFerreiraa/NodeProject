@@ -24,6 +24,19 @@ class UserRepository {
 
         return {id: userId};
     }
+
+    async update({ name, email, password, id }) {
+        const database = await sqliteConnection();
+
+        await database.run(`
+        UPDATE users SET
+        name = ?,
+        email = ?,
+        password = ?,
+        updated_at = DATETIME('now')
+        WHERE id = ?
+    `, [name, email, password, id]);
+    }
 }
 
 module.exports = UserRepository;
