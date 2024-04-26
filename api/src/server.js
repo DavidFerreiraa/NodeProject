@@ -14,7 +14,7 @@ const app = express();
 migrationsRun();
 
 app.use(cors({
-    origin: ["http://localhost:5173", "https://main--elaborate-profiterole-5b894d.netlify.app"]
+    origin: ["http://localhost:5173", "https://elaborate-profiterole-5b894d.netlify.app"]
 }));
 app.use(express.json());
 app.use(routes);
