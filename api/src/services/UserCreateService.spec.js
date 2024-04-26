@@ -1,17 +1,40 @@
 const UserCreateService = require("./UserCreateService");
 const UserRepositoryInMemory = require("../repositories/UserRepositoryInMemory");
+const AppError = require("../utils/AppError");
 
-it("should create a user", async () => {
-    const user = {
-        name: "User test",
-        email: "user@test.com",
-        password: "123456"
-    }
+describe("UserCreateService", () => {
+    it("should create a user", async () => {
+        const user = {
+            name: "User test",
+            email: "user@test.com",
+            password: "123456"
+        };
+    
+        const userRepository = new UserRepositoryInMemory();
+        const userCreateService = new UserCreateService(userRepository);
+    
+        const userCreated = await userCreateService.execute(user);
+    
+        expect(userCreated).toHaveProperty("id");
+    })
 
-    const userRepositoryInMemory = new UserRepositoryInMemory();
-    const userCreateService = new UserCreateService(userRepositoryInMemory);
+    it("should not create a user with same e-mail", async () => {
+        const user1 = {
+            name: "User test 1",
+            email: "user@test.com", //same email
+            password: "123456"
+        };
 
-    const userCreated = await userCreateService.execute(user);
+        const user2 = {
+            name: "User test 2",
+            email: "user@test.com", //same email
+            password: "123456789"
+        };
 
-    expect(userCreated).toHaveProperty("id");
+        const userRepository = new UserRepositoryInMemory();
+        const userCreateService = new UserCreateService(userRepository);
+
+        await userCreateService.execute(user1);
+        await expect(userCreateService.execute(user2)).rejects.toEqual(new AppError("This e-mail is already in use."));
+    })
 })
