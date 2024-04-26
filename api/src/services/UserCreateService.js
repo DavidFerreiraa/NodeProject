@@ -8,7 +8,7 @@ class UserCreateService {
     }
 
     async execute({ name, email, password }) {
-        const userExists = await this.userRepository.finByEmail(email);
+        const userExists = await this.userRepository.findByEmail(email);
 
         if (!validator.validate(email)) {
             throw new AppError("Insert a valid e-mail.")

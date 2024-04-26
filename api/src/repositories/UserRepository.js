@@ -1,10 +1,18 @@
 const sqliteConnection = require("../database/sqlite");
 
 class UserRepository {
-    async finByEmail(email) {
+    async findByEmail(email) {
         const database = await sqliteConnection();
 
         const user = await database.get("SELECT * FROM users WHERE email = (?)", [email.toLowerCase()])
+
+        return user;
+    }
+
+    async findById(id) {
+        const database = await sqliteConnection();
+
+        const user = await database.get("SELECT * FROM users WHERE id = (?)", [id]);
 
         return user;
     }
