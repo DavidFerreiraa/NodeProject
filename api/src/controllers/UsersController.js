@@ -2,6 +2,7 @@ const AppError = require("../utils/AppError");
 
 const sqliteConnection = require("../database/sqlite");
 const UserRepository = require("../repositories/UserRepository");
+const UserCreateService = require("../services/UserCreateService");
 
 const { hash, compare } = require("bcryptjs");
 const validator = require("email-validator");
@@ -11,24 +12,9 @@ class UsersController {
         const { name, email, password } = request.body;
 
         const userRepository = new UserRepository();
-        
-        const userExists = await userRepository.finByEmail(email);
+        const userCreateService = new UserCreateService(userRepository);
 
-        if (!validator.validate(email)) {
-            throw new AppError("Insert a valid e-mail.")
-        }
-        
-        if (userExists) {
-            throw new AppError("This e-mail is already in use.");
-        }
-        
-        if (password.length < 6) {
-            throw new AppError("Your password must have more than 6 characters.")
-        }
-
-        const hashedPassword = await  hash(password, 8);
-
-        await userRepository.create({name, email, password: hashedPassword});
+        await userCreateService.execute({name, email, password});
 
         return response.status(201).json();
     }
