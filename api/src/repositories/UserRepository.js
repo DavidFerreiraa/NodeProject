@@ -28,7 +28,7 @@ class UserRepository {
     async update({ name, email, password, id }) {
         const database = await sqliteConnection();
 
-        await database.run(`
+        const userUpdated = await database.run(`
         UPDATE users SET
         name = ?,
         email = ?,
@@ -36,6 +36,8 @@ class UserRepository {
         updated_at = DATETIME('now')
         WHERE id = ?
     `, [name, email, password, id]);
+
+        return userUpdated;
     }
 }
 
