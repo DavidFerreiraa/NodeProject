@@ -50,7 +50,7 @@ class UserUpdateService {
             user.password = await hash(password, 8);
         }
 
-        this.userRepository.update({ name: user.name, email: user.email, password: user.password, id: user.id});
+        return this.userRepository.update({ name: user.name, email: user.email, password: user.password, id: user.id});
     }
 }
 
